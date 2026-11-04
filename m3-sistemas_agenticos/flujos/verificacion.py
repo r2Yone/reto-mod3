@@ -84,7 +84,9 @@ def verificar_pruebas_escritas(hu: str, ids_casos: list[str]) -> tuple[bool, str
     ok, log = _correr([sys.executable, "-m", "pytest", "tests", "--collect-only", "-q"], APP, timeout=120)
     if not ok:
         return False, log
-    texto = "".join(p.read_text(encoding="utf-8") for p in (APP / "tests").rglob("test_*.py"))
+    # Solo los archivos de esta historia: los ids CP-xx se repiten entre historias
+    hu_min = hu.lower().replace("-", "_")
+    texto = "".join(p.read_text(encoding="utf-8") for p in (APP / "tests").rglob(f"test_{hu_min}*.py"))
     faltan = [i for i in ids_casos if i not in texto]
     return not faltan, log if not faltan else f"Casos sin test: {', '.join(faltan)}"
 

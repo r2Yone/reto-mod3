@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { listarDepartamentos, listarEmpleados } from "./api.js";
 import FormularioEmpleado from "./componentes/FormularioEmpleado.jsx";
 import FormularioBaja from "./componentes/FormularioBaja.jsx";
+import FormularioVacaciones from "./componentes/FormularioVacaciones.jsx";
 import TablaEmpleados from "./componentes/TablaEmpleados.jsx";
 
 export default function App() {
@@ -9,6 +10,7 @@ export default function App() {
   const [departamentos, setDepartamentos] = useState([]);
   const [empleadoEnEdicion, setEmpleadoEnEdicion] = useState(null);
   const [empleadoEnBaja, setEmpleadoEnBaja] = useState(null);
+  const [empleadoVacaciones, setEmpleadoVacaciones] = useState(null);
 
   const [busqueda, setBusqueda] = useState("");
   const [filtroDepto, setFiltroDepto] = useState("");
@@ -54,7 +56,15 @@ export default function App() {
           alCancelar={() => setEmpleadoEnEdicion(null)}
         />
       )}
+      {empleadoVacaciones && (
+        <FormularioVacaciones
+          key={`vacaciones-${empleadoVacaciones.id}`}
+          empleado={empleadoVacaciones}
+          alCerrar={() => setEmpleadoVacaciones(null)}
+        />
+      )}
       <TablaEmpleados
+        alSolicitarVacaciones={setEmpleadoVacaciones}
         alEditar={(e) => {
           setEmpleadoEnBaja(null);
           setEmpleadoEnEdicion(e);

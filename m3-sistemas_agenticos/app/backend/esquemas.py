@@ -71,3 +71,30 @@ class EmpleadoSalida(BaseModel):
     estado: str
     fecha_baja: date | None
     creado_en: datetime
+
+
+class SolicitudVacaciones(BaseModel):
+    fecha_inicio: date
+    fecha_fin: date
+
+
+class ItemSolicitud(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    fecha_inicio: date
+    fecha_fin: date
+    dias_habiles: int
+
+
+class RespuestaSolicitud(ItemSolicitud):
+    empleado_id: int
+    dias_restantes: int
+
+
+class SaldoVacaciones(BaseModel):
+    empleado_id: int
+    anio: int
+    dias_usados: int
+    dias_disponibles: int
+    solicitudes: list[ItemSolicitud]

@@ -7,6 +7,7 @@ export default function TablaEmpleados({
   alCambiarFiltro,
   alEditar,
   alDarDeBaja,
+  alSolicitarVacaciones,
 }) {
   return (
     <section>
@@ -65,6 +66,12 @@ export default function TablaEmpleados({
                     </button>
                     <button data-testid={`baja-empleado-${e.id}`} onClick={() => alDarDeBaja(e)}>
                       Dar de baja
+                    </button>
+                    <button
+                      data-testid={`vacaciones-abrir-${e.id}`}
+                      onClick={() => alSolicitarVacaciones(e)}
+                    >
+                      Solicitar vacaciones
                     </button>
                   </>
                 )}

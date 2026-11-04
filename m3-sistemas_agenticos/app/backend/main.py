@@ -5,13 +5,14 @@ from fastapi.responses import JSONResponse
 
 import modelos  # noqa: F401  (registra las tablas en Base)
 from base_datos import Base, motor
-from routers import departamentos, empleados
+from routers import departamentos, empleados, vacaciones
 
 Base.metadata.create_all(motor)
 
 app = FastAPI(title="Gestión de empleados")
 app.include_router(empleados.router)
 app.include_router(departamentos.router)
+app.include_router(vacaciones.router)
 
 
 @app.get("/api/salud")
