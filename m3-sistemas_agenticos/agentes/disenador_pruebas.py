@@ -9,7 +9,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ValidationError
 
-from agentes.analista import escenarios
+from agentes.analista import escenarios, mensajes_exactos, patron_mensaje
 from agentes.base import RAIZ, Herramienta, ejecutar_agente, herramientas_archivos, rel
 
 
@@ -37,6 +37,11 @@ Cómo trabajas:
    o se hace en la pantalla, escribe además uno (solo uno) de nivel "e2e" cuyos pasos mencionen los
    data-testid que se usan. No escribas casos que solo cambian el dato de entrada: elige el más representativo.
 3. Usa datos concretos. Para correos usa el dominio corporativo empresa.com.
+   - En "resultado_esperado" escribe el código HTTP y el mensaje exacto del escenario, copiado
+     carácter por carácter, y los valores numéricos que se esperan en la respuesta.
+   - Si el resultado depende de datos previos (por ejemplo la fecha de ingreso del empleado o
+     solicitudes anteriores), ponlos en "precondiciones" y en "datos" con valores concretos.
+     Las fechas de ingreso nunca son futuras.
 4. Guarda los casos llamando a la herramienta guardar_casos (no escribas el JSON a mano).
    - "nivel" solo puede ser "api" o "e2e".
    - En "datos" TODOS los valores son texto: "201", no 201; para un campo vacío usa "", nunca null.
@@ -45,8 +50,9 @@ Cómo trabajas:
 5. Responde al final con una sola línea: cuántos casos escribiste."""
 
 
-def validar_plan(texto: str, gherkin: str) -> list[str]:
-    """Evaluador determinista: JSON válido y cada escenario cubierto por al menos un caso."""
+def validar_plan(texto: str, gherkin: str, mensajes: list[tuple[str, str]] = ()) -> list[str]:
+    """Evaluador determinista: JSON válido, cada escenario cubierto por al menos un caso
+    y cada mensaje exacto del contexto presente en algún caso."""
     try:
         plan = PlanPruebas.model_validate_json(texto)
     except ValidationError as e:
@@ -56,6 +62,11 @@ def validar_plan(texto: str, gherkin: str) -> list[str]:
     ids = [c.id for c in plan.casos]
     if len(ids) != len(set(ids)):
         problemas.append("Hay ids de caso repetidos.")
+    textos = [c.model_dump_json() for c in plan.casos]
+    for _, mensaje in mensajes:
+        patron = patron_mensaje(json.dumps(mensaje, ensure_ascii=False)[1:-1])  # como queda dentro del JSON
+        if not any(patron.search(t) for t in textos):
+            problemas.append(f"Ningún caso espera el mensaje exacto «{mensaje}».")
     return problemas
 
 
@@ -88,10 +99,13 @@ def disenar_casos(criterios: Path, max_intentos: int = 2) -> Path:
     sistema = SISTEMA.format(criterios=rel(criterios))
     gherkin = criterios.read_text(encoding="utf-8")
     tarea = f"Diseña los casos de prueba para {rel(criterios)}."
+    # Los mensajes exactos salen del contexto que cita la historia (salida/HU-xx -> historias/HU-xx-*.md)
+    historia = next((RAIZ / "historias").glob(f"{carpeta.name}-*.md"), None)
+    mensajes = mensajes_exactos(historia) if historia else []
     for intento in range(1, max_intentos + 1):
         print(f"Diseñador de pruebas · intento {intento}")
-        ejecutar_agente(sistema, herramientas, tarea, nombre="disenador")
-        problemas = validar_plan(destino.read_text(encoding="utf-8"), gherkin) if destino.exists() \
+        ejecutar_agente(sistema, herramientas, tarea, max_pasos=15, nombre="disenador")
+        problemas = validar_plan(destino.read_text(encoding="utf-8"), gherkin, mensajes) if destino.exists() \
             else [f"No se escribió {rel(destino)}."]
         if not problemas:
             return destino

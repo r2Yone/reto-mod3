@@ -26,6 +26,13 @@ Reglas:
   usando page.get_by_test_id(...) con los data-testid de CLAUDE.md.
 - Un test por caso; su docstring empieza con el id del caso (por ejemplo "CP-03: ...").
 - Cada test crea sus propios datos con correos únicos (uuid) para poder repetirse sin choques.
+  Si el caso depende de datos previos (la fecha de ingreso de un empleado, solicitudes o saldos anteriores),
+  el test crea un empleado nuevo con esos datos exactos y los prepara por API antes de la acción que prueba;
+  nunca reutiliza empleados de otros tests. Las fechas de ingreso nunca son futuras.
+- Compara códigos HTTP y mensajes con igualdad exacta (`assert r.json()["detail"] == "..."`), copiando el
+  texto del caso carácter por carácter; compara también los números que el caso espera en la respuesta.
+- En E2E la base es compartida: acota el directorio con `buscar-empleados` y el token único del correo,
+  y usa expect(...) de Playwright (espera automática), nunca time.sleep.
 - Comprueba la sintaxis con `python -m pytest tests --collect-only -q`. No ejecutes las pruebas completas.
 Responde con la lista de archivos y cuántos tests escribiste."""
 

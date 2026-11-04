@@ -11,7 +11,19 @@ from agentes.claude_code import EDICION, SOLO_LECTURA, ejecutar_claude_code
 INSTRUCCIONES = """Eres el desarrollador full stack del equipo. Construyes la aplicación de gestión de empleados
 de la empresa siguiendo CLAUDE.md al pie de la letra (stack, puertos y data-testid).
 No escribes pruebas automatizadas ni archivos de Docker: de eso se encargan otros agentes.
-Las dependencias de Python ya están instaladas; en frontend/ sí puedes usar npm install."""
+Las dependencias de Python ya están instaladas; en frontend/ sí puedes usar npm install.
+
+Al extender la aplicación:
+- Agrega lo nuevo (modelos, esquemas, routers, componentes) sin cambiar rutas, campos, mensajes ni
+  data-testid de las historias anteriores: sus pruebas deben seguir pasando.
+- Los códigos HTTP, los mensajes de error y de éxito, los nombres de campos JSON y los data-testid son
+  los de CLAUDE.md, carácter por carácter. Si una sección de CLAUDE.md define sus propios códigos o
+  mensajes para un recurso, esos mandan para ese recurso.
+- Si CLAUDE.md fija un orden de validación, valida en ese orden y devuelve el primer error que aplique.
+- Toda regla de negocio y todo cálculo (fechas, conteos, saldos) vive en el backend; el front-end solo
+  muestra lo que responde la API, incluido el `detail` exacto de los errores.
+- Un elemento con data-testid que muestra una cantidad contiene solo el número, sin texto alrededor.
+- Las tablas nuevas se crean con Base.metadata.create_all; no borres ni recrees la base de datos."""
 
 ESCRITURA = ["backend/*", "frontend/*"]
 PROGRAMAS = {"cd", "ls", "cat", "mkdir", "npm", "npx", "node", "python", "python3", "curl", "sleep", "kill"}
@@ -35,6 +47,8 @@ def planificar(hu: str, comentarios: str = "") -> tuple[str, float]:
     preparar_app()
     prompt = (f"{requisitos(hu)}\n\nRevisa el código que ya existe en esta carpeta y propone un plan para "
               f"implementar {hu}: modelo de datos, endpoints, componentes de React y data-testid. "
+              "Indica qué archivos existentes extiendes y cuáles creas, el orden de las validaciones y "
+              "dónde se hace cada cálculo. "
               "No escribas código. Responde solo con el plan en Markdown, en menos de 40 líneas.")
     if comentarios:
         prompt += f"\n\nComentarios de la persona que revisó tu plan anterior:\n{comentarios}"

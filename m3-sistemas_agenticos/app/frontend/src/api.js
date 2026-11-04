@@ -33,6 +33,16 @@ export const darDeBajaEmpleado = (id, fecha_baja) =>
     body: JSON.stringify({ fecha_baja }),
   });
 
+export const obtenerSaldoVacaciones = (id, anio) =>
+  pedir(`/api/empleados/${id}/vacaciones${anio ? `?anio=${anio}` : ""}`);
+
+export const solicitarVacaciones = (id, datos) =>
+  pedir(`/api/empleados/${id}/vacaciones`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos),
+  });
+
 export const crearEmpleado =(datos) =>
   pedir("/api/empleados", {
     method: "POST",
