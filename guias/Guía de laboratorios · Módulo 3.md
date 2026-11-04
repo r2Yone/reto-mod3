@@ -250,7 +250,7 @@ python -m flujos.flujo_s3 historias/HU-02-consultar-directorio.md
 En Windows:
 
 ```powershell
-docker info *> $null; if ($?) { "Docker listo" }
+docker info *> $null; if ($LASTEXITCODE -eq 0) { "Docker listo" } else { "Docker no está corriendo" }
 python -m flujos.flujo_s3 historias/HU-02-consultar-directorio.md
 ```
 

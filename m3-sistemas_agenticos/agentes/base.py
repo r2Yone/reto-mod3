@@ -101,8 +101,10 @@ def ejecutar_agente(sistema: str, herramientas: list[Herramienta], tarea: str,
     registro = {h.nombre: h for h in herramientas}
     mensajes = [{"role": "user", "content": tarea}]
     for paso in range(max_pasos):
-        resp = cliente.messages.create(model=os.environ["MODEL"], max_tokens=16000, system=sistema,
-                                       tools=[h.esquema() for h in herramientas], messages=mensajes)
+        # streaming: el SDK no permite max_tokens grandes sin él (thinking + JSON largo no caben en 16K)
+        with cliente.messages.stream(model=os.environ["MODEL"], max_tokens=32000, system=sistema,
+                                     tools=[h.esquema() for h in herramientas], messages=mensajes) as stream:
+            resp = stream.get_final_message()
         mensajes.append({"role": "assistant", "content": resp.content})
         print(f"  [{nombre}] stop_reason={resp.stop_reason} · bloques={[b.type for b in resp.content]}")   # ← diagnóstico
         if resp.stop_reason == "max_tokens":   # el corte no pasa en silencio

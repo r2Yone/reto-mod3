@@ -1,0 +1,733 @@
+{
+  "historia": "HU-01",
+  "casos": [
+    {
+      "id": "CP-01",
+      "escenario": "Registrar un empleado con datos válidos",
+      "nivel": "api",
+      "precondiciones": [
+        "El último número de empleado asignado es EMP-0007",
+        "No existe ningún empleado con el correo ana.lopez@empresa.com"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con los datos indicados",
+        "Revisar el código de respuesta y el cuerpo"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "codigo_http": "201",
+        "numero_empleado_esperado": "EMP-0008"
+      },
+      "resultado_esperado": "La API responde con éxito (201) y el empleado queda guardado con numero_empleado EMP-0008."
+    },
+    {
+      "id": "CP-02",
+      "escenario": "Registrar un empleado con datos válidos",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El último número de empleado asignado es EMP-0007",
+        "No existe ningún empleado con el correo ana.lopez@empresa.com",
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Escribir 'Ana López' en empleado-nombre",
+        "Escribir 'ana.lopez@empresa.com' en empleado-correo",
+        "Escribir 'Analista de datos' en empleado-puesto",
+        "Seleccionar 'Tecnología' en empleado-departamento",
+        "Escribir '2024-03-15' en empleado-fecha-ingreso",
+        "Hacer clic en empleado-guardar",
+        "Leer el contenido de mensaje-exito"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "numero_empleado_esperado": "EMP-0008"
+      },
+      "resultado_esperado": "mensaje-exito es visible y su texto incluye el número de empleado EMP-0008."
+    },
+    {
+      "id": "CP-03",
+      "escenario": "El empleado recién registrado queda activo y con datos generados por el sistema",
+      "nivel": "api",
+      "precondiciones": [
+        "No existe ningún empleado con el correo ana.lopez@empresa.com"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con los datos válidos de referencia",
+        "Obtener el empleado creado de la respuesta (o con GET /api/empleados)",
+        "Revisar estado, numero_empleado, creado_en y fecha_baja"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "estado_esperado": "activo",
+        "formato_numero_empleado": "EMP-NNNN (EMP- más 4 dígitos)",
+        "fecha_baja_esperada": "null"
+      },
+      "resultado_esperado": "El empleado tiene estado 'activo', numero_empleado con formato EMP- y 4 dígitos, creado_en con la fecha y hora del registro y fecha_baja vacía (null)."
+    },
+    {
+      "id": "CP-04",
+      "escenario": "El número de empleado es consecutivo entre registros",
+      "nivel": "api",
+      "precondiciones": [
+        "El último número de empleado asignado es EMP-0010"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con correo uno@empresa.com y los demás datos válidos",
+        "Enviar POST /api/empleados con correo dos@empresa.com y los demás datos válidos",
+        "Comparar los numero_empleado de ambas respuestas"
+      ],
+      "datos": {
+        "correo_1": "uno@empresa.com",
+        "correo_2": "dos@empresa.com",
+        "nombre": "Ana López",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "numero_1_esperado": "EMP-0011",
+        "numero_2_esperado": "EMP-0012"
+      },
+      "resultado_esperado": "El primer empleado recibe EMP-0011 y el segundo EMP-0012."
+    },
+    {
+      "id": "CP-05",
+      "escenario": "El número de empleado es consecutivo entre registros",
+      "nivel": "e2e",
+      "precondiciones": [
+        "El último número de empleado asignado es EMP-0010",
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Llenar empleado-nombre 'Ana López', empleado-correo 'uno@empresa.com', empleado-puesto 'Analista de datos', empleado-departamento 'Tecnología' y empleado-fecha-ingreso '2024-03-15'",
+        "Hacer clic en empleado-guardar y leer mensaje-exito",
+        "Cambiar empleado-correo a 'dos@empresa.com' (completando de nuevo los campos si el formulario se limpió)",
+        "Hacer clic en empleado-guardar y leer mensaje-exito"
+      ],
+      "datos": {
+        "correo_1": "uno@empresa.com",
+        "correo_2": "dos@empresa.com",
+        "nombre": "Ana López",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "numero_1_esperado": "EMP-0011",
+        "numero_2_esperado": "EMP-0012"
+      },
+      "resultado_esperado": "El primer mensaje-exito incluye EMP-0011 y el segundo incluye EMP-0012."
+    },
+    {
+      "id": "CP-06",
+      "escenario": "El número de empleado no se captura en el formulario",
+      "nivel": "api",
+      "precondiciones": [
+        "El último número de empleado asignado es EMP-0020",
+        "No existe ningún empleado con el correo ana.lopez@empresa.com"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados solo con nombre, correo, puesto, departamento y fecha_ingreso (sin numero_empleado)",
+        "Revisar el cuerpo de la respuesta"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "codigo_http": "201",
+        "numero_empleado_esperado": "EMP-0021"
+      },
+      "resultado_esperado": "El registro se acepta sin enviar número de empleado y el sistema genera numero_empleado EMP-0021."
+    },
+    {
+      "id": "CP-07",
+      "escenario": "El número de empleado no se captura en el formulario",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Verificar que existen empleado-nombre, empleado-correo, empleado-puesto, empleado-departamento y empleado-fecha-ingreso",
+        "Verificar que no existe ningún campo editable para el número de empleado (ni data-testid empleado-numero ni input con ese propósito)",
+        "Verificar que el formulario solo tiene esos cinco campos y el botón empleado-guardar"
+      ],
+      "datos": {
+        "campos_esperados": "nombre, correo, puesto, departamento, fecha de ingreso"
+      },
+      "resultado_esperado": "El formulario muestra únicamente los cinco campos esperados y ningún campo editable de número de empleado."
+    },
+    {
+      "id": "CP-08",
+      "escenario": "El correo se guarda en minúsculas",
+      "nivel": "api",
+      "precondiciones": [
+        "No existe ningún empleado con el correo carlos.ruiz@empresa.com"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con correo 'Carlos.Ruiz@empresa.com' y los demás datos válidos",
+        "Revisar el correo en la respuesta"
+      ],
+      "datos": {
+        "nombre": "Carlos Ruiz",
+        "correo": "Carlos.Ruiz@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "codigo_http": "201",
+        "correo_guardado": "carlos.ruiz@empresa.com"
+      },
+      "resultado_esperado": "El empleado se guarda correctamente y su correo guardado es carlos.ruiz@empresa.com."
+    },
+    {
+      "id": "CP-09",
+      "escenario": "Se aceptan nombre y puesto en su longitud máxima",
+      "nivel": "api",
+      "precondiciones": [
+        "No existe ningún empleado con el correo ana.lopez@empresa.com"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con un nombre de 80 caracteres y un puesto de 60 caracteres",
+        "Revisar el código de respuesta"
+      ],
+      "datos": {
+        "nombre": "ABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJ",
+        "puesto": "ABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJ",
+        "correo": "ana.lopez@empresa.com",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "longitud_nombre": "80",
+        "longitud_puesto": "60",
+        "codigo_http": "201"
+      },
+      "resultado_esperado": "El empleado se guarda correctamente con el nombre y puesto completos."
+    },
+    {
+      "id": "CP-10",
+      "escenario": "Se acepta una fecha de ingreso igual a la fecha de hoy",
+      "nivel": "api",
+      "precondiciones": [
+        "La fecha actual del sistema es 2025-06-10",
+        "No existe ningún empleado con el correo ana.lopez@empresa.com"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con fecha_ingreso 2025-06-10 y los demás datos válidos",
+        "Revisar el código de respuesta"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2025-06-10",
+        "hoy": "2025-06-10",
+        "codigo_http": "201"
+      },
+      "resultado_esperado": "El empleado se guarda correctamente."
+    },
+    {
+      "id": "CP-11",
+      "escenario": "Rechazar un correo que ya está registrado",
+      "nivel": "api",
+      "precondiciones": [
+        "Existe un empleado con el correo ana.lopez@empresa.com"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con correo ana.lopez@empresa.com y los demás datos válidos",
+        "Revisar el código y el detail de la respuesta",
+        "Consultar GET /api/empleados y contar los empleados"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "codigo_http": "409",
+        "detail": "El correo ya está registrado"
+      },
+      "resultado_esperado": "La API responde 409 con detail 'El correo ya está registrado' y la cantidad de empleados no cambia."
+    },
+    {
+      "id": "CP-12",
+      "escenario": "Rechazar un correo que ya está registrado",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Existe un empleado con el correo ana.lopez@empresa.com",
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Llenar empleado-nombre 'Ana López', empleado-correo 'ana.lopez@empresa.com', empleado-puesto 'Analista de datos', empleado-departamento 'Tecnología' y empleado-fecha-ingreso '2024-03-15'",
+        "Hacer clic en empleado-guardar",
+        "Leer mensaje-error",
+        "Revisar tabla-empleados"
+      ],
+      "datos": {
+        "correo": "ana.lopez@empresa.com",
+        "mensaje": "El correo ya está registrado"
+      },
+      "resultado_esperado": "mensaje-error muestra 'El correo ya está registrado', no aparece mensaje-exito y no se agrega una fila nueva en tabla-empleados."
+    },
+    {
+      "id": "CP-13",
+      "escenario": "Rechazar un correo repetido aunque cambien las mayúsculas",
+      "nivel": "api",
+      "precondiciones": [
+        "Existe un empleado con el correo ana.lopez@empresa.com"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con correo ANA.LOPEZ@empresa.com y los demás datos válidos",
+        "Revisar el código y el detail de la respuesta",
+        "Consultar GET /api/empleados y contar los empleados"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ANA.LOPEZ@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "codigo_http": "409",
+        "detail": "El correo ya está registrado"
+      },
+      "resultado_esperado": "La API responde 409 con detail 'El correo ya está registrado' y no se crea ningún empleado nuevo."
+    },
+    {
+      "id": "CP-14",
+      "escenario": "Rechazar un correo repetido aunque cambien las mayúsculas",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Existe un empleado con el correo ana.lopez@empresa.com",
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Llenar empleado-nombre 'Ana López', empleado-correo 'ANA.LOPEZ@empresa.com', empleado-puesto 'Analista de datos', empleado-departamento 'Tecnología' y empleado-fecha-ingreso '2024-03-15'",
+        "Hacer clic en empleado-guardar",
+        "Leer mensaje-error",
+        "Revisar tabla-empleados"
+      ],
+      "datos": {
+        "correo": "ANA.LOPEZ@empresa.com",
+        "mensaje": "El correo ya está registrado"
+      },
+      "resultado_esperado": "mensaje-error muestra 'El correo ya está registrado' y no se agrega ninguna fila nueva en tabla-empleados."
+    },
+    {
+      "id": "CP-15",
+      "escenario": "Rechazar un correo que no es del dominio corporativo",
+      "nivel": "api",
+      "precondiciones": [],
+      "pasos": [
+        "Enviar POST /api/empleados con correo ana.lopez@gmail.com y los demás datos válidos",
+        "Revisar el código y el detail de la respuesta",
+        "Consultar GET /api/empleados"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@gmail.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "codigo_http": "422",
+        "detail": "Usa el correo corporativo @empresa.com"
+      },
+      "resultado_esperado": "La API responde 422 con el mensaje 'Usa el correo corporativo @empresa.com' y no se crea ningún empleado."
+    },
+    {
+      "id": "CP-16",
+      "escenario": "Rechazar un correo que no es del dominio corporativo",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Llenar empleado-nombre 'Ana López', empleado-correo 'ana.lopez@gmail.com', empleado-puesto 'Analista de datos', empleado-departamento 'Tecnología' y empleado-fecha-ingreso '2024-03-15'",
+        "Hacer clic en empleado-guardar",
+        "Leer mensaje-error"
+      ],
+      "datos": {
+        "correo": "ana.lopez@gmail.com",
+        "mensaje": "Usa el correo corporativo @empresa.com"
+      },
+      "resultado_esperado": "mensaje-error muestra 'Usa el correo corporativo @empresa.com' y no aparece mensaje-exito."
+    },
+    {
+      "id": "CP-17",
+      "escenario": "Rechazar una fecha de ingreso futura",
+      "nivel": "api",
+      "precondiciones": [
+        "La fecha actual del sistema es 2025-06-10"
+      ],
+      "pasos": [
+        "Enviar POST /api/empleados con fecha_ingreso 2025-06-11 y los demás datos válidos",
+        "Revisar el código y el detail de la respuesta",
+        "Consultar GET /api/empleados"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2025-06-11",
+        "hoy": "2025-06-10",
+        "codigo_http": "422",
+        "detail": "La fecha de ingreso no puede ser futura"
+      },
+      "resultado_esperado": "La API responde 422 con el mensaje 'La fecha de ingreso no puede ser futura' y no se crea ningún empleado."
+    },
+    {
+      "id": "CP-18",
+      "escenario": "Rechazar una fecha de ingreso futura",
+      "nivel": "e2e",
+      "precondiciones": [
+        "La fecha actual del sistema es 2025-06-10",
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Llenar empleado-nombre 'Ana López', empleado-correo 'ana.lopez@empresa.com', empleado-puesto 'Analista de datos' y empleado-departamento 'Tecnología'",
+        "Escribir '2025-06-11' en empleado-fecha-ingreso",
+        "Hacer clic en empleado-guardar",
+        "Leer mensaje-error"
+      ],
+      "datos": {
+        "fecha_ingreso": "2025-06-11",
+        "hoy": "2025-06-10",
+        "mensaje": "La fecha de ingreso no puede ser futura"
+      },
+      "resultado_esperado": "mensaje-error muestra 'La fecha de ingreso no puede ser futura' y no aparece mensaje-exito."
+    },
+    {
+      "id": "CP-19",
+      "escenario": "Rechazar un nombre vacío",
+      "nivel": "api",
+      "precondiciones": [],
+      "pasos": [
+        "Enviar POST /api/empleados con nombre vacío y los demás datos válidos",
+        "Revisar el código y el detail de la respuesta",
+        "Consultar GET /api/empleados"
+      ],
+      "datos": {
+        "nombre": "",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "codigo_http": "422",
+        "campo_con_error": "nombre"
+      },
+      "resultado_esperado": "La API responde 422 señalando el campo nombre y no se crea ningún empleado."
+    },
+    {
+      "id": "CP-20",
+      "escenario": "Rechazar un nombre vacío",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Dejar empleado-nombre vacío",
+        "Llenar empleado-correo 'ana.lopez@empresa.com', empleado-puesto 'Analista de datos', empleado-departamento 'Tecnología' y empleado-fecha-ingreso '2024-03-15'",
+        "Hacer clic en empleado-guardar",
+        "Leer mensaje-error"
+      ],
+      "datos": {
+        "nombre": "",
+        "campo_con_error": "nombre"
+      },
+      "resultado_esperado": "mensaje-error es visible e indica que se debe corregir el campo nombre; no aparece mensaje-exito."
+    },
+    {
+      "id": "CP-21",
+      "escenario": "Rechazar un nombre de 1 carácter",
+      "nivel": "api",
+      "precondiciones": [],
+      "pasos": [
+        "Enviar POST /api/empleados con nombre 'A' y los demás datos válidos",
+        "Revisar el código y el detail de la respuesta",
+        "Consultar GET /api/empleados"
+      ],
+      "datos": {
+        "nombre": "A",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "codigo_http": "422",
+        "campo_con_error": "nombre"
+      },
+      "resultado_esperado": "La API responde 422 señalando el campo nombre y no se crea ningún empleado."
+    },
+    {
+      "id": "CP-22",
+      "escenario": "Rechazar un nombre de 1 carácter",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Escribir 'A' en empleado-nombre",
+        "Llenar empleado-correo 'ana.lopez@empresa.com', empleado-puesto 'Analista de datos', empleado-departamento 'Tecnología' y empleado-fecha-ingreso '2024-03-15'",
+        "Hacer clic en empleado-guardar",
+        "Leer mensaje-error"
+      ],
+      "datos": {
+        "nombre": "A",
+        "campo_con_error": "nombre"
+      },
+      "resultado_esperado": "mensaje-error es visible e indica que se debe corregir el campo nombre; no aparece mensaje-exito."
+    },
+    {
+      "id": "CP-23",
+      "escenario": "Rechazar un nombre de más de 80 caracteres",
+      "nivel": "api",
+      "precondiciones": [],
+      "pasos": [
+        "Enviar POST /api/empleados con un nombre de 81 caracteres y los demás datos válidos",
+        "Revisar el código y el detail de la respuesta",
+        "Consultar GET /api/empleados"
+      ],
+      "datos": {
+        "nombre": "ABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJK",
+        "longitud_nombre": "81",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "codigo_http": "422",
+        "campo_con_error": "nombre"
+      },
+      "resultado_esperado": "La API responde 422 señalando el campo nombre y no se crea ningún empleado."
+    },
+    {
+      "id": "CP-24",
+      "escenario": "Rechazar un nombre de más de 80 caracteres",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Escribir en empleado-nombre un texto de 81 caracteres",
+        "Llenar empleado-correo 'ana.lopez@empresa.com', empleado-puesto 'Analista de datos', empleado-departamento 'Tecnología' y empleado-fecha-ingreso '2024-03-15'",
+        "Hacer clic en empleado-guardar",
+        "Leer mensaje-error"
+      ],
+      "datos": {
+        "nombre": "ABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJK",
+        "longitud_nombre": "81",
+        "campo_con_error": "nombre"
+      },
+      "resultado_esperado": "mensaje-error es visible e indica que se debe corregir el campo nombre; no aparece mensaje-exito."
+    },
+    {
+      "id": "CP-25",
+      "escenario": "Rechazar un puesto vacío",
+      "nivel": "api",
+      "precondiciones": [],
+      "pasos": [
+        "Enviar POST /api/empleados con puesto vacío y los demás datos válidos",
+        "Revisar el código y el detail de la respuesta",
+        "Consultar GET /api/empleados"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "codigo_http": "422",
+        "campo_con_error": "puesto"
+      },
+      "resultado_esperado": "La API responde 422 señalando el campo puesto y no se crea ningún empleado."
+    },
+    {
+      "id": "CP-26",
+      "escenario": "Rechazar un puesto vacío",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Llenar empleado-nombre 'Ana López', empleado-correo 'ana.lopez@empresa.com', empleado-departamento 'Tecnología' y empleado-fecha-ingreso '2024-03-15'",
+        "Dejar empleado-puesto vacío",
+        "Hacer clic en empleado-guardar",
+        "Leer mensaje-error"
+      ],
+      "datos": {
+        "puesto": "",
+        "campo_con_error": "puesto"
+      },
+      "resultado_esperado": "mensaje-error es visible e indica que se debe corregir el campo puesto; no aparece mensaje-exito."
+    },
+    {
+      "id": "CP-27",
+      "escenario": "Rechazar un puesto de 1 carácter",
+      "nivel": "api",
+      "precondiciones": [],
+      "pasos": [
+        "Enviar POST /api/empleados con puesto 'X' y los demás datos válidos",
+        "Revisar el código y el detail de la respuesta",
+        "Consultar GET /api/empleados"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "X",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "codigo_http": "422",
+        "campo_con_error": "puesto"
+      },
+      "resultado_esperado": "La API responde 422 señalando el campo puesto y no se crea ningún empleado."
+    },
+    {
+      "id": "CP-28",
+      "escenario": "Rechazar un puesto de 1 carácter",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Llenar empleado-nombre 'Ana López', empleado-correo 'ana.lopez@empresa.com', empleado-departamento 'Tecnología' y empleado-fecha-ingreso '2024-03-15'",
+        "Escribir 'X' en empleado-puesto",
+        "Hacer clic en empleado-guardar",
+        "Leer mensaje-error"
+      ],
+      "datos": {
+        "puesto": "X",
+        "campo_con_error": "puesto"
+      },
+      "resultado_esperado": "mensaje-error es visible e indica que se debe corregir el campo puesto; no aparece mensaje-exito."
+    },
+    {
+      "id": "CP-29",
+      "escenario": "Rechazar un puesto de más de 60 caracteres",
+      "nivel": "api",
+      "precondiciones": [],
+      "pasos": [
+        "Enviar POST /api/empleados con un puesto de 61 caracteres y los demás datos válidos",
+        "Revisar el código y el detail de la respuesta",
+        "Consultar GET /api/empleados"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "ABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJK",
+        "longitud_puesto": "61",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "2024-03-15",
+        "codigo_http": "422",
+        "campo_con_error": "puesto"
+      },
+      "resultado_esperado": "La API responde 422 señalando el campo puesto y no se crea ningún empleado."
+    },
+    {
+      "id": "CP-30",
+      "escenario": "Rechazar un puesto de más de 60 caracteres",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Llenar empleado-nombre 'Ana López', empleado-correo 'ana.lopez@empresa.com', empleado-departamento 'Tecnología' y empleado-fecha-ingreso '2024-03-15'",
+        "Escribir en empleado-puesto un texto de 61 caracteres",
+        "Hacer clic en empleado-guardar",
+        "Leer mensaje-error"
+      ],
+      "datos": {
+        "puesto": "ABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJABCDEFGHIJK",
+        "longitud_puesto": "61",
+        "campo_con_error": "puesto"
+      },
+      "resultado_esperado": "mensaje-error es visible e indica que se debe corregir el campo puesto; no aparece mensaje-exito."
+    },
+    {
+      "id": "CP-31",
+      "escenario": "Rechazar un departamento que no está en la lista",
+      "nivel": "api",
+      "precondiciones": [],
+      "pasos": [
+        "Enviar POST /api/empleados con departamento 'Marketing' y los demás datos válidos",
+        "Revisar el código y el detail de la respuesta",
+        "Consultar GET /api/empleados"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Marketing",
+        "fecha_ingreso": "2024-03-15",
+        "codigo_http": "422",
+        "campo_con_error": "departamento"
+      },
+      "resultado_esperado": "La API responde 422 señalando el campo departamento y no se crea ningún empleado."
+    },
+    {
+      "id": "CP-32",
+      "escenario": "Rechazar un departamento que no está en la lista",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Revisar las opciones de empleado-departamento y comprobar que 'Marketing' no se ofrece",
+        "Llenar empleado-nombre 'Ana López', empleado-correo 'ana.lopez@empresa.com', empleado-puesto 'Analista de datos' y empleado-fecha-ingreso '2024-03-15'",
+        "Dejar empleado-departamento sin seleccionar un valor de la lista",
+        "Hacer clic en empleado-guardar",
+        "Leer mensaje-error"
+      ],
+      "datos": {
+        "departamento_invalido": "Marketing",
+        "campo_con_error": "departamento"
+      },
+      "resultado_esperado": "empleado-departamento no ofrece 'Marketing'; al guardar sin departamento válido, mensaje-error indica que se debe corregir el campo departamento y no aparece mensaje-exito."
+    },
+    {
+      "id": "CP-33",
+      "escenario": "Rechazar un registro sin fecha de ingreso",
+      "nivel": "api",
+      "precondiciones": [],
+      "pasos": [
+        "Enviar POST /api/empleados con fecha_ingreso vacía y los demás datos válidos",
+        "Revisar el código y el detail de la respuesta",
+        "Consultar GET /api/empleados"
+      ],
+      "datos": {
+        "nombre": "Ana López",
+        "correo": "ana.lopez@empresa.com",
+        "puesto": "Analista de datos",
+        "departamento": "Tecnología",
+        "fecha_ingreso": "",
+        "codigo_http": "422",
+        "campo_con_error": "fecha_ingreso"
+      },
+      "resultado_esperado": "La API responde 422 señalando el campo fecha_ingreso y no se crea ningún empleado."
+    },
+    {
+      "id": "CP-34",
+      "escenario": "Rechazar un registro sin fecha de ingreso",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Estar en el formulario de registro de empleado"
+      ],
+      "pasos": [
+        "Llenar empleado-nombre 'Ana López', empleado-correo 'ana.lopez@empresa.com', empleado-puesto 'Analista de datos' y empleado-departamento 'Tecnología'",
+        "Dejar empleado-fecha-ingreso vacío",
+        "Hacer clic en empleado-guardar",
+        "Leer mensaje-error"
+      ],
+      "datos": {
+        "fecha_ingreso": "",
+        "campo_con_error": "fecha_ingreso"
+      },
+      "resultado_esperado": "mensaje-error es visible e indica que se debe corregir el campo fecha_ingreso; no aparece mensaje-exito."
+    }
+  ]
+}

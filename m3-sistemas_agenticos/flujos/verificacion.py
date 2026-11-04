@@ -3,6 +3,7 @@
 Cada función devuelve (ok, log). El log regresa al agente responsable cuando algo falla.
 """
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -27,7 +28,10 @@ def _responde(url: str, intentos: int = 30) -> tuple[bool, str]:
 
 
 def _correr(comando: list[str], cwd: Path, timeout: int = 600) -> tuple[bool, str]:
-    r = subprocess.run(comando, cwd=cwd, capture_output=True, text=True, timeout=timeout)
+    exe = shutil.which(comando[0])  # en Windows npm es npm.cmd; subprocess solo no lo encuentra
+    if exe is None:
+        return False, f"No se encontró '{comando[0]}' en el PATH"
+    r = subprocess.run([exe, *comando[1:]], cwd=cwd, capture_output=True, text=True, timeout=timeout)
     return r.returncode == 0, (r.stdout + r.stderr)[-4000:]
 
 

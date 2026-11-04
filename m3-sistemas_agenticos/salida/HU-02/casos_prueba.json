@@ -1,0 +1,407 @@
+{
+  "historia": "HU-02",
+  "casos": [
+    {
+      "id": "CP-01",
+      "escenario": "Ver el directorio completo",
+      "nivel": "api",
+      "precondiciones": [
+        "Existen los 4 empleados del antecedente (EMP-0001 a EMP-0004)"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados sin parámetros de búsqueda ni filtro",
+        "Verificar el código de respuesta y la cantidad de elementos",
+        "Verificar que cada elemento incluye numero_empleado, nombre, puesto, departamento y estado",
+        "Localizar el elemento con numero_empleado EMP-0001 y comprobar sus valores"
+      ],
+      "datos": {
+        "codigo_respuesta": "200",
+        "cantidad": "4",
+        "numero_empleado": "EMP-0001",
+        "nombre": "Ana García",
+        "puesto": "Desarrolladora",
+        "departamento": "Tecnología",
+        "estado": "activo"
+      },
+      "resultado_esperado": "La API responde 200 con 4 empleados; cada uno trae número, nombre, puesto, departamento y estado; Ana García aparece como EMP-0001, Desarrolladora, Tecnología, activo."
+    },
+    {
+      "id": "CP-02",
+      "escenario": "Ver el directorio completo",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Existen los 4 empleados del antecedente"
+      ],
+      "pasos": [
+        "Abrir la pantalla del directorio sin escribir en buscar-empleados ni elegir filtro-departamento",
+        "Verificar que tabla-empleados contiene 4 elementos fila-empleado-{id}",
+        "Verificar que cada fila muestra número (numero-empleado-{id}), nombre, puesto, departamento y estado (estado-empleado-{id})",
+        "En la fila de Ana García verificar numero-empleado-{id} = EMP-0001, estado-empleado-{id} = Activo y el texto de la fila con Ana García, Desarrolladora y Tecnología"
+      ],
+      "datos": {
+        "filas": "4",
+        "numero_empleado": "EMP-0001",
+        "nombre": "Ana García",
+        "puesto": "Desarrolladora",
+        "departamento": "Tecnología",
+        "estado": "Activo"
+      },
+      "resultado_esperado": "La tabla muestra 4 filas con todos los datos; la fila de Ana García muestra EMP-0001, Ana García, Desarrolladora, Tecnología y Activo."
+    },
+    {
+      "id": "CP-03",
+      "escenario": "Un empleado dado de baja sigue apareciendo en el directorio",
+      "nivel": "api",
+      "precondiciones": [
+        "Marta Ruiz (EMP-0003) tiene estado baja"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados sin búsqueda ni filtro",
+        "Localizar el elemento con numero_empleado EMP-0003",
+        "Verificar su nombre y su estado"
+      ],
+      "datos": {
+        "codigo_respuesta": "200",
+        "numero_empleado": "EMP-0003",
+        "nombre": "Marta Ruiz",
+        "estado": "baja"
+      },
+      "resultado_esperado": "La respuesta incluye a Marta Ruiz con numero_empleado EMP-0003 y estado baja."
+    },
+    {
+      "id": "CP-04",
+      "escenario": "Un empleado dado de baja sigue apareciendo en el directorio",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Marta Ruiz (EMP-0003) tiene estado baja"
+      ],
+      "pasos": [
+        "Abrir la pantalla del directorio sin búsqueda ni filtro",
+        "Localizar en tabla-empleados la fila de Marta Ruiz (fila-empleado-{id})",
+        "Verificar numero-empleado-{id} y estado-empleado-{id}"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0003",
+        "nombre": "Marta Ruiz",
+        "estado": "Baja"
+      },
+      "resultado_esperado": "La fila de Marta Ruiz está visible con numero-empleado-{id} = EMP-0003 y estado-empleado-{id} = Baja."
+    },
+    {
+      "id": "CP-05",
+      "escenario": "Buscar por nombre",
+      "nivel": "api",
+      "precondiciones": [
+        "Existen los 4 empleados del antecedente"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el parámetro de búsqueda de texto igual a 'Luis Pérez'",
+        "Verificar el código de respuesta y la cantidad de elementos",
+        "Verificar el numero_empleado del único elemento"
+      ],
+      "datos": {
+        "busqueda": "Luis Pérez",
+        "codigo_respuesta": "200",
+        "cantidad": "1",
+        "numero_empleado": "EMP-0002"
+      },
+      "resultado_esperado": "La API responde 200 con 1 empleado: EMP-0002."
+    },
+    {
+      "id": "CP-06",
+      "escenario": "Buscar por nombre",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Existen los 4 empleados del antecedente"
+      ],
+      "pasos": [
+        "Abrir la pantalla del directorio",
+        "Escribir 'Luis Pérez' en buscar-empleados",
+        "Verificar que tabla-empleados muestra 1 fila-empleado-{id}",
+        "Verificar que numero-empleado-{id} de esa fila es EMP-0002"
+      ],
+      "datos": {
+        "busqueda": "Luis Pérez",
+        "filas": "1",
+        "numero_empleado": "EMP-0002"
+      },
+      "resultado_esperado": "Solo se ve la fila de EMP-0002 (Luis Pérez)."
+    },
+    {
+      "id": "CP-07",
+      "escenario": "Buscar por correo",
+      "nivel": "api",
+      "precondiciones": [
+        "Existen los 4 empleados del antecedente"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el parámetro de búsqueda de texto igual a 'carlos.soto@empresa.com'",
+        "Verificar el código de respuesta y la cantidad de elementos",
+        "Verificar el numero_empleado del único elemento"
+      ],
+      "datos": {
+        "busqueda": "carlos.soto@empresa.com",
+        "codigo_respuesta": "200",
+        "cantidad": "1",
+        "numero_empleado": "EMP-0004"
+      },
+      "resultado_esperado": "La API responde 200 con 1 empleado: EMP-0004."
+    },
+    {
+      "id": "CP-08",
+      "escenario": "Buscar por correo",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Existen los 4 empleados del antecedente"
+      ],
+      "pasos": [
+        "Abrir la pantalla del directorio",
+        "Escribir 'carlos.soto@empresa.com' en buscar-empleados",
+        "Verificar que tabla-empleados muestra 1 fila-empleado-{id}",
+        "Verificar que numero-empleado-{id} de esa fila es EMP-0004"
+      ],
+      "datos": {
+        "busqueda": "carlos.soto@empresa.com",
+        "filas": "1",
+        "numero_empleado": "EMP-0004"
+      },
+      "resultado_esperado": "Solo se ve la fila de EMP-0004 (Carlos Soto)."
+    },
+    {
+      "id": "CP-09",
+      "escenario": "La búsqueda por nombre no distingue mayúsculas de minúsculas",
+      "nivel": "api",
+      "precondiciones": [
+        "Existen los 4 empleados del antecedente"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el parámetro de búsqueda de texto igual a 'ANA GARCÍA'",
+        "Verificar el código de respuesta y la cantidad de elementos",
+        "Verificar el numero_empleado del único elemento"
+      ],
+      "datos": {
+        "busqueda": "ANA GARCÍA",
+        "codigo_respuesta": "200",
+        "cantidad": "1",
+        "numero_empleado": "EMP-0001"
+      },
+      "resultado_esperado": "La API responde 200 con 1 empleado: EMP-0001 (Ana García)."
+    },
+    {
+      "id": "CP-10",
+      "escenario": "La búsqueda por nombre no distingue mayúsculas de minúsculas",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Existen los 4 empleados del antecedente"
+      ],
+      "pasos": [
+        "Abrir la pantalla del directorio",
+        "Escribir 'ANA GARCÍA' en buscar-empleados",
+        "Verificar que tabla-empleados muestra 1 fila-empleado-{id}",
+        "Verificar que numero-empleado-{id} de esa fila es EMP-0001"
+      ],
+      "datos": {
+        "busqueda": "ANA GARCÍA",
+        "filas": "1",
+        "numero_empleado": "EMP-0001"
+      },
+      "resultado_esperado": "Solo se ve la fila de EMP-0001 (Ana García)."
+    },
+    {
+      "id": "CP-11",
+      "escenario": "La búsqueda por correo no distingue mayúsculas de minúsculas",
+      "nivel": "api",
+      "precondiciones": [
+        "Existen los 4 empleados del antecedente"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el parámetro de búsqueda de texto igual a 'Marta.Ruiz@EMPRESA.COM'",
+        "Verificar el código de respuesta y la cantidad de elementos",
+        "Verificar el numero_empleado del único elemento"
+      ],
+      "datos": {
+        "busqueda": "Marta.Ruiz@EMPRESA.COM",
+        "codigo_respuesta": "200",
+        "cantidad": "1",
+        "numero_empleado": "EMP-0003"
+      },
+      "resultado_esperado": "La API responde 200 con 1 empleado: EMP-0003 (Marta Ruiz)."
+    },
+    {
+      "id": "CP-12",
+      "escenario": "Filtrar por departamento",
+      "nivel": "api",
+      "precondiciones": [
+        "Existen los 4 empleados del antecedente"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el filtro de departamento igual a 'Ventas'",
+        "Verificar el código de respuesta y la cantidad de elementos",
+        "Verificar numero_empleado y departamento del único elemento"
+      ],
+      "datos": {
+        "departamento": "Ventas",
+        "codigo_respuesta": "200",
+        "cantidad": "1",
+        "numero_empleado": "EMP-0002"
+      },
+      "resultado_esperado": "La API responde 200 con 1 empleado: EMP-0002 con departamento Ventas."
+    },
+    {
+      "id": "CP-13",
+      "escenario": "Filtrar por departamento",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Existen los 4 empleados del antecedente"
+      ],
+      "pasos": [
+        "Abrir la pantalla del directorio",
+        "Seleccionar 'Ventas' en filtro-departamento",
+        "Verificar que tabla-empleados muestra 1 fila-empleado-{id}",
+        "Verificar numero-empleado-{id} = EMP-0002 y que la fila muestra el departamento Ventas"
+      ],
+      "datos": {
+        "departamento": "Ventas",
+        "filas": "1",
+        "numero_empleado": "EMP-0002"
+      },
+      "resultado_esperado": "Solo se ve la fila de EMP-0002 con departamento Ventas."
+    },
+    {
+      "id": "CP-14",
+      "escenario": "Filtrar por un departamento que incluye empleados dados de baja",
+      "nivel": "api",
+      "precondiciones": [
+        "Marta Ruiz (EMP-0003) de Finanzas tiene estado baja"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el filtro de departamento igual a 'Finanzas'",
+        "Verificar el código de respuesta y la cantidad de elementos",
+        "Verificar numero_empleado y estado del único elemento"
+      ],
+      "datos": {
+        "departamento": "Finanzas",
+        "codigo_respuesta": "200",
+        "cantidad": "1",
+        "numero_empleado": "EMP-0003",
+        "estado": "baja"
+      },
+      "resultado_esperado": "La API responde 200 con 1 empleado: EMP-0003 con estado baja."
+    },
+    {
+      "id": "CP-15",
+      "escenario": "Filtrar por un departamento sin empleados",
+      "nivel": "api",
+      "precondiciones": [
+        "Ningún empleado pertenece al departamento Operaciones"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el filtro de departamento igual a 'Operaciones'",
+        "Verificar el código de respuesta y la cantidad de elementos"
+      ],
+      "datos": {
+        "departamento": "Operaciones",
+        "codigo_respuesta": "200",
+        "cantidad": "0"
+      },
+      "resultado_esperado": "La API responde 200 con una lista vacía (0 empleados)."
+    },
+    {
+      "id": "CP-16",
+      "escenario": "Filtrar por un departamento sin empleados",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Ningún empleado pertenece al departamento Operaciones"
+      ],
+      "pasos": [
+        "Abrir la pantalla del directorio",
+        "Seleccionar 'Operaciones' en filtro-departamento",
+        "Verificar que no hay ningún fila-empleado-{id}",
+        "Verificar que sin-resultados es visible"
+      ],
+      "datos": {
+        "departamento": "Operaciones",
+        "filas": "0"
+      },
+      "resultado_esperado": "No se ve ninguna fila y se muestra el mensaje en sin-resultados indicando que no hay resultados."
+    },
+    {
+      "id": "CP-17",
+      "escenario": "Búsqueda sin resultados",
+      "nivel": "api",
+      "precondiciones": [
+        "Ningún empleado coincide con 'Zacarías Inexistente' en nombre ni correo"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con el parámetro de búsqueda de texto igual a 'Zacarías Inexistente'",
+        "Verificar el código de respuesta y la cantidad de elementos"
+      ],
+      "datos": {
+        "busqueda": "Zacarías Inexistente",
+        "codigo_respuesta": "200",
+        "cantidad": "0"
+      },
+      "resultado_esperado": "La API responde 200 con una lista vacía (0 empleados)."
+    },
+    {
+      "id": "CP-18",
+      "escenario": "Búsqueda sin resultados",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Ningún empleado coincide con 'Zacarías Inexistente' en nombre ni correo"
+      ],
+      "pasos": [
+        "Abrir la pantalla del directorio",
+        "Escribir 'Zacarías Inexistente' en buscar-empleados",
+        "Verificar que no hay ningún fila-empleado-{id}",
+        "Verificar que sin-resultados es visible"
+      ],
+      "datos": {
+        "busqueda": "Zacarías Inexistente",
+        "filas": "0"
+      },
+      "resultado_esperado": "No se ve ninguna fila y se muestra el mensaje en sin-resultados indicando que no hay resultados."
+    },
+    {
+      "id": "CP-19",
+      "escenario": "Quitar la búsqueda restablece el listado",
+      "nivel": "api",
+      "precondiciones": [
+        "Existen los 4 empleados del antecedente"
+      ],
+      "pasos": [
+        "Enviar GET /api/empleados con búsqueda 'Luis Pérez' y verificar que devuelve 1 empleado",
+        "Enviar GET /api/empleados con el parámetro de búsqueda vacío (\"\")",
+        "Verificar el código de respuesta y la cantidad de elementos"
+      ],
+      "datos": {
+        "busqueda_inicial": "Luis Pérez",
+        "busqueda_final": "",
+        "cantidad_inicial": "1",
+        "cantidad_final": "4",
+        "codigo_respuesta": "200"
+      },
+      "resultado_esperado": "Con la búsqueda vacía la API responde 200 con los 4 empleados."
+    },
+    {
+      "id": "CP-20",
+      "escenario": "Quitar la búsqueda restablece el listado",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Existen los 4 empleados del antecedente"
+      ],
+      "pasos": [
+        "Abrir la pantalla del directorio",
+        "Escribir 'Luis Pérez' en buscar-empleados y verificar que tabla-empleados muestra 1 fila",
+        "Borrar el texto de buscar-empleados",
+        "Verificar que tabla-empleados muestra 4 filas fila-empleado-{id}"
+      ],
+      "datos": {
+        "busqueda": "Luis Pérez",
+        "filas_con_busqueda": "1",
+        "filas_sin_busqueda": "4"
+      },
+      "resultado_esperado": "Al borrar la búsqueda se vuelven a ver los 4 empleados."
+    }
+  ]
+}

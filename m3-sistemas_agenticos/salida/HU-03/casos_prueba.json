@@ -1,0 +1,348 @@
+{
+  "historia": "HU-03",
+  "casos": [
+    {
+      "id": "CP-01",
+      "escenario": "Cambiar el puesto y el departamento de un empleado activo",
+      "nivel": "api",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 Ana Torres, correo ana.torres@empresa.com, puesto Analista, departamento Ventas, fecha de ingreso 2023-03-01, estado activo"
+      ],
+      "pasos": [
+        "Editar al empleado EMP-0001 por la API (/api/empleados/{id}) con puesto 'Líder de Finanzas' y departamento 'Finanzas'",
+        "Verificar que la respuesta es exitosa (2xx)",
+        "Consultar al empleado EMP-0001 y verificar puesto y departamento",
+        "Verificar que el estado sigue siendo activo"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "puesto": "Líder de Finanzas",
+        "departamento": "Finanzas",
+        "codigo_http": "200",
+        "estado": "activo"
+      },
+      "resultado_esperado": "La respuesta es exitosa; el empleado EMP-0001 tiene puesto 'Líder de Finanzas', departamento 'Finanzas' y estado 'activo'."
+    },
+    {
+      "id": "CP-02",
+      "escenario": "Cambiar el puesto y el departamento de un empleado activo",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 Ana Torres, correo ana.torres@empresa.com, puesto Analista, departamento Ventas, fecha de ingreso 2023-03-01, estado activo",
+        "El directorio de empleados está abierto"
+      ],
+      "pasos": [
+        "Pulsar editar-empleado-{id} en la fila fila-empleado-{id} de EMP-0001",
+        "Escribir 'Líder de Finanzas' en empleado-puesto",
+        "Seleccionar 'Finanzas' en empleado-departamento",
+        "Pulsar empleado-guardar",
+        "Verificar que aparece mensaje-exito",
+        "Verificar en la fila fila-empleado-{id} el nuevo puesto y departamento, y que estado-empleado-{id} dice 'Activo'"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "puesto": "Líder de Finanzas",
+        "departamento": "Finanzas",
+        "estado_mostrado": "Activo"
+      },
+      "resultado_esperado": "Se muestra mensaje-exito; la fila de EMP-0001 muestra puesto 'Líder de Finanzas', departamento 'Finanzas' y estado 'Activo'."
+    },
+    {
+      "id": "CP-03",
+      "escenario": "El número de empleado y el correo permanecen iguales tras editar",
+      "nivel": "api",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 Ana Torres, correo ana.torres@empresa.com, puesto Analista, departamento Ventas, fecha de ingreso 2023-03-01, estado activo"
+      ],
+      "pasos": [
+        "Editar al empleado EMP-0001 por la API con puesto 'Líder de Finanzas' y departamento 'Finanzas'",
+        "Consultar al empleado EMP-0001",
+        "Verificar numero_empleado y correo"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "correo": "ana.torres@empresa.com",
+        "puesto": "Líder de Finanzas",
+        "departamento": "Finanzas"
+      },
+      "resultado_esperado": "El empleado conserva numero_empleado 'EMP-0001' y correo 'ana.torres@empresa.com'."
+    },
+    {
+      "id": "CP-04",
+      "escenario": "Rechazar un puesto de 1 carácter",
+      "nivel": "api",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 con puesto Analista, departamento Ventas y estado activo"
+      ],
+      "pasos": [
+        "Editar al empleado EMP-0001 por la API con puesto 'A' y departamento 'Ventas'",
+        "Verificar que la respuesta es 422 y el detalle señala el campo puesto",
+        "Consultar al empleado EMP-0001 y verificar su puesto"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "puesto": "A",
+        "departamento": "Ventas",
+        "codigo_http": "422"
+      },
+      "resultado_esperado": "La respuesta es 422 indicando el campo 'puesto'; el puesto de EMP-0001 sigue siendo 'Analista'."
+    },
+    {
+      "id": "CP-05",
+      "escenario": "Rechazar un puesto de 1 carácter",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 con puesto Analista, departamento Ventas y estado activo",
+        "El directorio de empleados está abierto"
+      ],
+      "pasos": [
+        "Pulsar editar-empleado-{id} en la fila de EMP-0001",
+        "Escribir 'A' en empleado-puesto",
+        "Mantener 'Ventas' en empleado-departamento",
+        "Pulsar empleado-guardar",
+        "Verificar que aparece mensaje-error que indica corregir el campo puesto",
+        "Verificar en la tabla-empleados que el puesto de EMP-0001 sigue siendo 'Analista'"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "puesto": "A",
+        "departamento": "Ventas"
+      },
+      "resultado_esperado": "mensaje-error indica que se debe corregir el campo 'puesto'; el puesto de EMP-0001 sigue siendo 'Analista'."
+    },
+    {
+      "id": "CP-06",
+      "escenario": "Rechazar un puesto de 61 caracteres",
+      "nivel": "api",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 con puesto Analista, departamento Ventas y estado activo"
+      ],
+      "pasos": [
+        "Editar al empleado EMP-0001 por la API con un puesto de 61 caracteres y departamento 'Ventas'",
+        "Verificar que la respuesta es 422 y el detalle señala el campo puesto",
+        "Consultar al empleado EMP-0001 y verificar su puesto"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "puesto": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "longitud_puesto": "61",
+        "departamento": "Ventas",
+        "codigo_http": "422"
+      },
+      "resultado_esperado": "La respuesta es 422 indicando el campo 'puesto'; el puesto de EMP-0001 sigue siendo 'Analista'."
+    },
+    {
+      "id": "CP-07",
+      "escenario": "Rechazar un puesto vacío",
+      "nivel": "api",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 con puesto Analista, departamento Ventas y estado activo"
+      ],
+      "pasos": [
+        "Editar al empleado EMP-0001 por la API con puesto '' y departamento 'Ventas'",
+        "Verificar que la respuesta es 422 y el detalle señala el campo puesto",
+        "Consultar al empleado EMP-0001 y verificar su puesto"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "puesto": "",
+        "departamento": "Ventas",
+        "codigo_http": "422"
+      },
+      "resultado_esperado": "La respuesta es 422 indicando el campo 'puesto'; el puesto de EMP-0001 sigue siendo 'Analista'."
+    },
+    {
+      "id": "CP-08",
+      "escenario": "Rechazar un departamento que no está en la lista",
+      "nivel": "api",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 con puesto Analista, departamento Ventas y estado activo",
+        "'Marketing' no figura en GET /api/departamentos"
+      ],
+      "pasos": [
+        "Editar al empleado EMP-0001 por la API con puesto 'Analista' y departamento 'Marketing'",
+        "Verificar que la respuesta es 422 y el detalle señala el campo departamento",
+        "Consultar al empleado EMP-0001 y verificar su departamento"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "puesto": "Analista",
+        "departamento": "Marketing",
+        "codigo_http": "422"
+      },
+      "resultado_esperado": "La respuesta es 422 indicando el campo 'departamento'; el departamento de EMP-0001 sigue siendo 'Ventas'."
+    },
+    {
+      "id": "CP-09",
+      "escenario": "Dar de baja a un empleado activo",
+      "nivel": "api",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 Ana Torres, fecha de ingreso 2023-03-01, estado activo"
+      ],
+      "pasos": [
+        "Dar de baja al empleado EMP-0001 por la API con fecha de baja 2024-06-30",
+        "Verificar que la respuesta es exitosa (2xx)",
+        "Consultar al empleado EMP-0001 y verificar estado y fecha_baja"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "fecha_baja": "2024-06-30",
+        "estado": "baja",
+        "codigo_http": "200"
+      },
+      "resultado_esperado": "La respuesta es exitosa; el empleado EMP-0001 tiene estado 'baja' y fecha_baja '2024-06-30'."
+    },
+    {
+      "id": "CP-10",
+      "escenario": "Dar de baja a un empleado activo",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 Ana Torres, fecha de ingreso 2023-03-01, estado activo",
+        "El directorio de empleados está abierto"
+      ],
+      "pasos": [
+        "Pulsar baja-empleado-{id} en la fila fila-empleado-{id} de EMP-0001",
+        "Escribir 2024-06-30 en empleado-fecha-baja",
+        "Pulsar confirmar-baja",
+        "Verificar que aparece mensaje-exito",
+        "Verificar que estado-empleado-{id} dice 'Baja'"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "fecha_baja": "2024-06-30",
+        "estado_mostrado": "Baja"
+      },
+      "resultado_esperado": "Se muestra mensaje-exito y estado-empleado-{id} de EMP-0001 muestra 'Baja'."
+    },
+    {
+      "id": "CP-11",
+      "escenario": "El empleado dado de baja sigue apareciendo en el directorio",
+      "nivel": "api",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 Ana Torres, fecha de ingreso 2023-03-01, estado activo"
+      ],
+      "pasos": [
+        "Dar de baja al empleado EMP-0001 por la API con fecha de baja 2024-06-30",
+        "Consultar GET /api/empleados",
+        "Buscar a EMP-0001 en la lista"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "nombre": "Ana Torres",
+        "fecha_baja": "2024-06-30",
+        "estado": "baja"
+      },
+      "resultado_esperado": "El listado incluye a EMP-0001 'Ana Torres' con estado 'baja'."
+    },
+    {
+      "id": "CP-12",
+      "escenario": "El empleado dado de baja sigue apareciendo en el directorio",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 Ana Torres, fecha de ingreso 2023-03-01, estado activo",
+        "El directorio de empleados está abierto"
+      ],
+      "pasos": [
+        "Pulsar baja-empleado-{id} en la fila de EMP-0001",
+        "Escribir 2024-06-30 en empleado-fecha-baja",
+        "Pulsar confirmar-baja",
+        "Revisar la tabla-empleados",
+        "Verificar que fila-empleado-{id} sigue visible con numero-empleado-{id} 'EMP-0001' y estado-empleado-{id} 'Baja'"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "nombre": "Ana Torres",
+        "fecha_baja": "2024-06-30",
+        "estado_mostrado": "Baja"
+      },
+      "resultado_esperado": "La tabla-empleados sigue mostrando la fila de EMP-0001 'Ana Torres' con estado 'Baja'."
+    },
+    {
+      "id": "CP-13",
+      "escenario": "Dar de baja con fecha igual a la fecha de ingreso",
+      "nivel": "api",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 con fecha de ingreso 2023-03-01 y estado activo"
+      ],
+      "pasos": [
+        "Dar de baja al empleado EMP-0001 por la API con fecha de baja 2023-03-01",
+        "Verificar que la respuesta es exitosa",
+        "Consultar al empleado EMP-0001 y verificar estado y fecha_baja"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "fecha_ingreso": "2023-03-01",
+        "fecha_baja": "2023-03-01",
+        "estado": "baja",
+        "codigo_http": "200"
+      },
+      "resultado_esperado": "La respuesta es exitosa; EMP-0001 tiene estado 'baja' y fecha_baja '2023-03-01'."
+    },
+    {
+      "id": "CP-14",
+      "escenario": "Rechazar una fecha de baja anterior a la fecha de ingreso",
+      "nivel": "api",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 con fecha de ingreso 2023-03-01 y estado activo"
+      ],
+      "pasos": [
+        "Dar de baja al empleado EMP-0001 por la API con fecha de baja 2023-02-28",
+        "Verificar que la respuesta es 422 y el detalle señala el campo fecha de baja",
+        "Consultar al empleado EMP-0001 y verificar estado y fecha_baja"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "fecha_ingreso": "2023-03-01",
+        "fecha_baja": "2023-02-28",
+        "codigo_http": "422",
+        "estado": "activo"
+      },
+      "resultado_esperado": "La respuesta es 422 indicando el campo de fecha de baja; EMP-0001 sigue 'activo' y sin fecha_baja."
+    },
+    {
+      "id": "CP-15",
+      "escenario": "Rechazar una fecha de baja anterior a la fecha de ingreso",
+      "nivel": "e2e",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 con fecha de ingreso 2023-03-01 y estado activo",
+        "El directorio de empleados está abierto"
+      ],
+      "pasos": [
+        "Pulsar baja-empleado-{id} en la fila de EMP-0001",
+        "Escribir 2023-02-28 en empleado-fecha-baja",
+        "Pulsar confirmar-baja",
+        "Verificar que aparece mensaje-error que indica corregir la fecha de baja",
+        "Verificar que estado-empleado-{id} sigue diciendo 'Activo'"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "fecha_ingreso": "2023-03-01",
+        "fecha_baja": "2023-02-28",
+        "estado_mostrado": "Activo"
+      },
+      "resultado_esperado": "mensaje-error indica que se debe corregir la fecha de baja; EMP-0001 sigue mostrando 'Activo'."
+    },
+    {
+      "id": "CP-16",
+      "escenario": "No se puede editar a un empleado dado de baja",
+      "nivel": "api",
+      "precondiciones": [
+        "Existe el empleado EMP-0001 con puesto Analista y departamento Ventas",
+        "El empleado EMP-0001 está dado de baja con fecha de baja 2024-06-30"
+      ],
+      "pasos": [
+        "Editar al empleado EMP-0001 por la API con puesto 'Gerente' y departamento 'Operaciones'",
+        "Verificar que la respuesta es 409 y el mensaje",
+        "Consultar al empleado EMP-0001 y verificar puesto y departamento"
+      ],
+      "datos": {
+        "numero_empleado": "EMP-0001",
+        "puesto": "Gerente",
+        "departamento": "Operaciones",
+        "codigo_http": "409",
+        "mensaje": "No se puede editar a un empleado dado de baja"
+      },
+      "resultado_esperado": "La respuesta es 409 con detail 'No se puede editar a un empleado dado de baja'; EMP-0001 conserva puesto 'Analista' y departamento 'Ventas'."
+    }
+  ]
+}
